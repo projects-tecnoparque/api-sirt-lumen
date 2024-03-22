@@ -14,5 +14,11 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return $router->app->version() . 'v2';
+});
+
+$router->group([
+    'namespace' => 'User',
+], function () use ($router) {
+    $router->get('/users', 'UserController@index');
 });

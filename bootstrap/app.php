@@ -108,11 +108,22 @@ $app->register(
 | can respond to, as well as the controllers that may handle them.
 |
 */
+$app->router->get('/', function(){
+    return "<center>". config('app.name'). "</center>";
+});
 
 $app->router->group([
-    'namespace' => 'App\Http\Controllers',
+    'namespace' => 'App\Http\Controllers\V1',
+    'prefix' => 'v1'
 ], function ($router) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__.'/../routes/v1/web.php';
+});
+
+$app->router->group([
+    'namespace' => 'App\Http\Controllers\v2',
+    'prefix' => 'v2'
+], function ($router) {
+    require __DIR__.'/../routes/v2/web.php';
 });
 
 return $app;
