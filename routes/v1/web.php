@@ -21,5 +21,10 @@ $router->group([
 ], function () use ($router) {
     $router->get('/users', 'UserController@index');
 });
+$router->group([
+    'namespace' => 'TipoDocumento',
+], function () use ($router) {
+    $router->get('/tipo-documentos', 'TipoDocumentoController@index');
+});
 
 
