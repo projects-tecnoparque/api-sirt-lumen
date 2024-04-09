@@ -3,6 +3,7 @@
 namespace App\Exceptions\JsonApi;
 
 use Exception;
+use Illuminate\Http\Response;
 
 class BadRequestHttpException extends Exception
 {
@@ -19,9 +20,9 @@ class BadRequestHttpException extends Exception
                 [
                 'title' => "Bad Request",
                 'detail' => $this->getMessage(),
-                'status' =>  "400"
+                'status' => (string) Response::HTTP_BAD_REQUEST
                 ]
             ]
-        ], 400);
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

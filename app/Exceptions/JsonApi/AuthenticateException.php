@@ -3,6 +3,7 @@
 namespace App\Exceptions\JsonApi;
 
 use Exception;
+use Illuminate\Http\Response;
 
 class AuthenticateException extends Exception
 {
@@ -19,9 +20,9 @@ class AuthenticateException extends Exception
                 [
                 'title' => "Unauthorized",
                 'detail' => $this->getMessage(),
-                'status' =>  "401"
+                'status' =>  (string) Response::HTTP_UNAUTHORIZED
                 ]
             ]
-        ], 401);
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }

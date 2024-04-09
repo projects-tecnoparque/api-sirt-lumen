@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -68,7 +69,7 @@ class Handler extends ExceptionHandler
             return $this->errorResponse(
                 title: "Unauthorized",
                 detail: $exception->getMessage(),
-                status: 403
+                status: Response::HTTP_FORBIDDEN
             );
         }
 
@@ -76,7 +77,7 @@ class Handler extends ExceptionHandler
             return $this->errorResponse(
                 title: "Method Not Allowed",
                 detail: $exception->getMessage(),
-                status: 405
+                status: Response::HTTP_METHOD_NOT_ALLOWED
             );
         }
         if ($exception instanceof BadRequestException) {
@@ -87,11 +88,20 @@ class Handler extends ExceptionHandler
             throw new JsonApi\NotFoundHttpException;
         }
 
+        if ($exception instanceof \InvalidArgumentException) {
+            return $this->errorResponse(
+                title: "InvalidArgumentException",
+                detail: $exception->getMessage(),
+                status: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
         if ($exception instanceof ModelNotFoundException) {
+            $model = strtolower(class_basename($exception->getModel()));
             return $this->errorResponse(
                 title: "Model Not Found Exception",
-                detail: $exception->getMessage(),
-                status: 404
+                detail: "Does not exits any instance of {$model} with given id",
+                status: Response::HTTP_NOT_FOUND
             );
         }
 
@@ -107,7 +117,7 @@ class Handler extends ExceptionHandler
             return $this->errorResponse(
                 title: "Query Exception",
                 detail: $exception->getMessage(),
-                status: 500
+                status: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
 
@@ -118,7 +128,7 @@ class Handler extends ExceptionHandler
         return $this->errorResponse(
             title: 'Falla inesperada',
             detail: 'Falla inesperada. Intente luego',
-            status: 500
+            status: Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
 

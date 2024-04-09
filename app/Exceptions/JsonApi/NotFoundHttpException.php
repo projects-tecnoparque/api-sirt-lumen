@@ -3,6 +3,7 @@
 namespace App\Exceptions\JsonApi;
 
 use Exception;
+use Illuminate\Http\Response;
 
 class NotFoundHttpException extends Exception
 {
@@ -19,9 +20,9 @@ class NotFoundHttpException extends Exception
                 [
                 'title' => "Not Found",
                 'detail' => "The requested resource was not found",
-                'status' =>  "404"
+                'status' =>  (string) Response::HTTP_NOT_FOUND
                 ]
             ]
-        ], 404);
+        ], Response::HTTP_NOT_FOUND);
     }
 }
