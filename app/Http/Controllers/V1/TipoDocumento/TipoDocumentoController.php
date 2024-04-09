@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\TipoDocumento;
 
 use App\Http\Resources\V1\TipoDocumentoResource;
-use App\Models\V1\TipoDocumento;
+use App\Models\TipoDocumento;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

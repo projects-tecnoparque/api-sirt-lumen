@@ -27,4 +27,10 @@ $router->group([
     $router->get('/tipo-documentos', 'TipoDocumentoController@index');
 });
 
+$router->group([
+    'namespace' => 'Indicador',
+], function () use ($router) {
+    $router->get('/indicadores/empresas-atendidas', 'IndicadorEmpresaAtentidaController@__invoke');
+});
+
 

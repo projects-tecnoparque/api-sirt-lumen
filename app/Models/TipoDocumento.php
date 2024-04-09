@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Models\V1;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class TipoDocumento extends Model
 {
+    protected $table = 'tiposdocumentos';
+
     protected $fillable = [
         'abreviatura', 'nombre', 'estado'
     ];

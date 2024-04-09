@@ -60,6 +60,11 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('auth');
+$app->configure('permission');
+
+config(['app.locale' => 'es']);
+config(['app.faker_locale' => 'es_ES']);
 
 /*
 |--------------------------------------------------------------------------
@@ -76,9 +81,15 @@ $app->configure('app');
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'signature' => App\Http\Middleware\SignatureMiddleware::class,
+    'throttle' => App\Http\Middleware\ThrottleRequests::class,
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'permission' => App\Http\Middleware\PermissionMiddleware::class, // cloned from Spatie\Permission\Middleware
+    'role'       => App\Http\Middleware\RoleMiddleware::class,  // cloned from Spatie\Permission\Middleware
+    'header-json' => App\Http\Middleware\ValidateJsonApiHeaders::class,
+
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -92,11 +103,16 @@ $app->configure('app');
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
+$app->register(App\Providers\JsonApiServiceProvider::class);
 $app->register(
     Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class
 );
+$app->register(App\Providers\PermissionServiceProvider::class);;
+
+$app->register(App\Providers\AuthServiceProvider::class);
+
+$app->alias('cache', \Illuminate\Cache\CacheManager::class);  // if you don't have this already
 
 /*
 |--------------------------------------------------------------------------
@@ -109,11 +125,16 @@ $app->register(
 |
 */
 $app->router->get('/', function(){
-    return "<center>". config('app.name'). "</center>";
+    return view('welcome', ['name' => "hola mundo"]);
 });
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers\V1',
+    'middleware' => [
+        'header-json',
+        'signature:X-Application-Name',
+        'throttle:10,1',
+    ],
     'prefix' => 'v1'
 ], function ($router) {
     require __DIR__.'/../routes/v1/web.php';
